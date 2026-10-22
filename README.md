@@ -24,3 +24,6 @@
 ## Как запустить
 Просто открыть `index.html` в браузере.  
 Или через локальный сервер (Live Server / `npx serve .`).
+
+## Деплой
+https://loliirl.github.io/vue-lab-5/
