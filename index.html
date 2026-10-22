@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лаба №5 — Vue 3</title>
+  <!-- Подключение Vue 3 через CDN (как требует шаблон) -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f6fb;
+      color: #1f2937;
+      margin: 0;
+      padding: 20px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { text-align: center; margin-bottom: 30px; }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      border-left: 5px solid #4f46e5;
+    }
+    .card h2 { margin-top: 0; font-size: 1.2rem; color: #4f46e5; }
+    input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; }
+    button {
+      padding: 8px 16px; background: #4f46e5; color: #fff;
+      border: none; border-radius: 6px; cursor: pointer; font-size: 1rem;
+    }
+    button:hover { background: #4338ca; }
+    ul { padding-left: 20px; }
+    .result { font-weight: bold; color: #059669; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<div id="app" class="container">
+  <h1>Мои мини-задачи на Vue 3</h1>
+
+  <task-one></task-one>
+  <task-two></task-two>
+  <task-three></task-three>
+  <task-four></task-four>
+  <task-five></task-five>
+  <task-six></task-six>
+  <task-seven></task-seven>
+</div>
+
+<script>
+  const { createApp, ref, computed, watch, onMounted } = Vue;
+
+  // ==========================================
+  // ЗАДАЧА 1. Привет, Vue! (Options API)
+  // ==========================================
+  const TaskOne = {
+    template: `
+      <div class="card">
+        <h2>1. Привет, Vue! (Options API)</h2>
+        <p>Введите имя: <input v-model="name" type="text"></p>
+        <p class="result">Привет, {{ name }}!</p>
+      </div>
+    `,
+    data() {
+      return {
+        name: 'Мир'
+      };
+    }
+  };
+
+  // ==========================================
+  // ЗАДАЧА 2. Реактивный счётчик (Composition API)
+  // ==========================================
+  const TaskTwo = {
+    template: `
+      <div class="card">
+        <h2>2. Реактивный счётчик</h2>
+        <p>Значение: <span class="result">{{ count }}</span></p>
+        <button @click="increment">Увеличить</button>
+      </div>
+    `,
+    setup() {
+      const count = ref(0);
+      const increment = () => { count.value++; };
+      return { count, increment };
+    }
+  };
+
+  // ==========================================
+  // ЗАДАЧА 3. Условный рендеринг (Composition API)
+  // ==========================================
+  const TaskThree = {
+    template: `
+      <div class="card">
+        <h2>3. Условный рендеринг</h2>
+        <button @click="toggle">Показать/Скрыть описание</button>
+        <p v-show="isVisible" style="margin-top: 10px; font-style: italic; color: #6b7280;">
+          Это скрытое описание. Оно появляется и исчезает при нажатии на кнопку.
+        </p>
+      </div>
+    `,
+    setup() {
+      const isVisible = ref(false);
+      const toggle = () => { isVisible.value = !isVisible.value; };
+      return { isVisible, toggle };
+    }
+  };
+
+  // ==========================================
+  // ЗАДАЧА 4. Список элементов (Composition API)
+  // ==========================================
+  const TaskFour = {
+    template: `
+      <div class="card">
+        <h2>4. Список элементов</h2>
+        <ul>
+          <li v-for="(item, index) in items" :key="item.id">
+            {{ index + 1 }}. {{ item.name }}
+          </li>
+        </ul>
+      </div>
+    `,
+    setup() {
+      const items = ref([
+        { id: 1, name: 'Выучить Vue' },
+        { id: 2, name: 'Сделать лабу' },
+        { id: 3, name: 'Сдать всё вовремя' }
+      ]);
+      return { items };
+    }
+  };
+
+  // ==========================================
+  // ЗАДАЧА 5. Мини-форма (Composition API)
+  // ==========================================
+  const TaskFive = {
+    template: `
+      <div class="card">
+        <h2>5. Мини-форма</h2>
+        <form @submit.prevent="addUser" style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <input v-model="newName" type="text" placeholder="Имя" required>
+          <input v-model="newAge" type="number" placeholder="Возраст" required>
+          <button type="submit">Добавить</button>
+        </form>
+        <ul style="margin-top: 15px;">
+          <li v-for="(user, index) in users" :key="index">
+            {{ user.name }} ({{ user.age }} лет)
+          </li>
+        </ul>
+      </div>
+    `,
+    setup() {
+      const newName = ref('');
+      const newAge = ref('');
+      const users = ref([]);
+
+      const addUser = () => {
+        if (newName.value && newAge.value) {
+          users.value.push({ name: newName.value, age: newAge.value });
+          newName.value = '';
+          newAge.value = '';
+        }
+      };
+      return { newName, newAge, users, addUser };
+    }
+  };
+
+  // ==========================================
+  // ЗАДАЧА 6. Вычисляемые свойства (Composition API)
+  // ==========================================
+  const TaskSix = {
+    template: `
+      <div class="card">
+        <h2>6. Вычисляемые свойства</h2>
+        <p>Введите число: <input v-model.number="number" type="number"></p>
+        <p>Число: <strong>{{ number }}</strong></p>
+        <p>Квадрат: <strong class="result">{{ square }}</strong></p>
+        <p>Куб: <strong class="result">{{ cube }}</strong></p>
+      </div>
+    `,
+    setup() {
+      const number = ref(0);
+      const square = computed(() => number.value * number.value);
+      const cube = computed(() => number.value * number.value * number.value);
+      return { number, square, cube };
+    }
+  };
+
+  // ==========================================
+  // ЗАДАЧА 7. Watch и жизненный цикл (Composition API)
+  // ==========================================
+  const TaskSeven = {
+    template: `
+      <div class="card">
+        <h2>7. Watch и жизненный цикл (2 балла)</h2>
+        <p>Текущее время: <strong>{{ currentTime }}</strong></p>
+        <p>Приветствие: <strong class="result">{{ greeting }}</strong></p>
+        <p style="font-size: 0.8rem; color: #6b7280;">
+          (Изменения времени пишутся в консоль браузера)
+        </p>
+      </div>
+    `,
+    setup() {
+      const timeObj = ref(new Date());
+      const currentTime = ref('');
+      let timerId = null;
+
+      const updateTime = () => {
+        timeObj.value = new Date();
+        currentTime.value = timeObj.value.toLocaleTimeString('ru-RU');
+      };
+
+      onMounted(() => {
+        updateTime();
+        timerId = setInterval(updateTime, 1000);
+      });
+
+      watch(timeObj, (newTime) => {
+        console.log('Время обновилось:', newTime.toLocaleTimeString('ru-RU'));
+      });
+
+      const greeting = computed(() => {
+        const hour = timeObj.value.getHours();
+        if (hour < 12) return 'Доброе утро ☀️';
+        if (hour < 18) return 'Добрый день ☀️';
+        return 'Добрый вечер 🌙';
+      });
+
+      return { currentTime, greeting };
+    }
+  };
+
+  // ==========================================
+  // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
+  // ==========================================
+  const app = createApp({});
+  app.component('task-one', TaskOne);
+  app.component('task-two', TaskTwo);
+  app.component('task-three', TaskThree);
+  app.component('task-four', TaskFour);
+  app.component('task-five', TaskFive);
+  app.component('task-six', TaskSix);
+  app.component('task-seven', TaskSeven);
+  app.mount('#app');
+</script>
+
+</body>
+</html>
